@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Be My Valentine?</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        /* --- CSS Styles --- */
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            height: 100dvh;
+            width: 100vw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(to bottom right, #ffdde1, #ee9ca7);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden; 
+            touch-action: none;
+            position: relative; 
+        }
+
+        /* --- Background Decorative Hearts --- */
+        .bg-hearts {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; 
+            z-index: 0; 
+            overflow: hidden;
+        }
+
+        .bg-heart {
+            position: absolute;
+            opacity: 0.6;
+            animation: floatHeart 6s ease-in-out infinite;
+        }
+
+        .bg-heart svg {
+            width: 100%;
+            height: 100%;
+            fill: #d32f2f; 
+        }
+
+        .h1 { width: 40px; top: 10%; left: 10%; animation-delay: 0s; color: #ff4b2b; }
+        .h2 { width: 60px; top: 20%; right: 15%; animation-delay: 1s; color: #e91e63; }
+        .h3 { width: 30px; bottom: 15%; left: 20%; animation-delay: 2s; color: #d32f2f; }
+        .h4 { width: 50px; bottom: 25%; right: 10%; animation-delay: 3s; color: #ff416c; }
+        .h5 { width: 35px; top: 50%; left: 5%; animation-delay: 4s; color: #ff4b2b; }
+        .h6 { width: 45px; top: 60%; right: 5%; animation-delay: 1.5s; color: #e91e63; }
+
+        @keyframes floatHeart {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        /* --- Main Content Container --- */
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.92);
+            padding: 2rem;
+            border-radius: 25px;
+            box-shadow: 0 15px 35px rgba(255, 64, 64, 0.25);
+            width: 85%;
+            max-width: 450px;
+            position: relative;
+            z-index: 10; 
+            min-height: 350px; 
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.2s;
+        }
+
+        /* Heart Pounding Animation Class */
+        .pounding {
+            animation: heartBeat 1.2s infinite;
+        }
+
+        @keyframes heartBeat {
+            0% { transform: scale(1); }
+            14% { transform: scale(1.05); } 
+            28% { transform: scale(1); }
+            42% { transform: scale(1.05); } 
+            70% { transform: scale(1); }
+        }
+
+        .emoji-header {
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+            animation: gentleBounce 2s infinite ease-in-out;
+        }
+
+        @keyframes gentleBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        h1 {
+            color: #d32f2f;
+            font-size: 2rem;
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            line-height: 1.3;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+            position: relative;
+            width: 100%;
+        }
+
+        button {
+            padding: 15px 35px;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 700;
+            outline: none;
+            z-index: 100;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        #yesBtn {
+            background: linear-gradient(to right, #ff416c, #ff4b2b);
+            color: white;
+            box-shadow: 0 5px 20px rgba(255, 65, 108, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        #yesBtn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 7px 25px rgba(255, 65, 108, 0.6);
+        }
+
+        #noBtn {
+            background-color: #ffffff;
+            color: #ff4b2b;
+            border: 3px solid #ff4b2b;
+            transition: top 0.1s ease-out, left 0.1s ease-out; 
+            position: relative; 
+        }
+
+        #teaseMessage {
+            min-height: 1.5em; 
+            color: #ff8a65;
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        #successContainer {
+            display: none; 
+            text-align: center;
+        }
+
+        #successMessage {
+            margin-top: 10px;
+            color: #d32f2f;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+        
+        #successImage {
+            max-width: 100%;
+            height: auto;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 15px;
+            width: 250px; 
+        }
+
+        @media (max-width: 600px) {
+            .emoji-header { font-size: 3rem; }
+            h1 { font-size: 1.6rem; }
+            button { padding: 12px 25px; font-size: 1rem; }
+            .container { padding: 2rem 1rem; width: 85%; }
+            #teaseMessage { font-size: 1rem; }
+            #successImage { width: 200px; } 
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-hearts">
+        <div class="bg-heart h1"><svg viewBox="0 0 32 29.6"><path d="M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,9.5,11.9,16,21.2c6.1-9.3,16-12.1,16-21.2C32,3.8,28.2,0,23.6,0z"/></svg></div>
+        <div class="bg-heart h2"><svg viewBox="0 0 32 29.6"><path d="M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,9.5,11.9,16,21.2c6.1-9.3,16-12.1,16-21.2C32,3.8,28.2,0,23.6,0z"/></svg></div>
+        <div class="bg-heart h3"><svg viewBox="0 0 32 29.6"><path d="M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,9.5,11.9,16,21.2c6.1-9.3,16-12.1,16-21.2C32,3.8,28.2,0,23.6,0z"/></svg></div>
+        <div class="bg-heart h4"><svg viewBox="0 0 32 29.6"><path d="M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,9.5,11.9,16,21.2c6.1-9.3,16-12.1,16-21.2C32,3.8,28.2,0,23.6,0z"/></svg></div>
+        <div class="bg-heart h5"><svg viewBox="0 0 32 29.6"><path d="M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,9.5,11.9,16,21.2c6.1-9.3,16-12.1,16-21.2C32,3.8,28.2,0,23.6,0z"/></svg></div>
+        <div class="bg-heart h6"><svg viewBox="0 0 32 29.6"><path d="M23.6,0c-3.4,0-6.3,2.7-7.6,5.6C14.7,2.7,11.8,0,8.4,0C3.8,0,0,3.8,0,8.4c0,9.4,9.5,11.9,16,21.2c6.1-9.3,16-12.1,16-21.2C32,3.8,28.2,0,23.6,0z"/></svg></div>
+    </div>
+
+    <div class="container">
+        <div id="emojiHeader" class="emoji-header">🐱💖✨</div>
+        <h1 id="mainHeading">Will you be my valentine date?</h1>
+        
+        <div class="buttons">
+            <button id="yesBtn">Yes</button>
+            <button id="noBtn">No</button>
+        </div>
+
+        <div id="teaseMessage"></div>
+
+        <div id="successContainer">
+            <img id="successImage" src="https://i.ibb.co/C5mT8gcs/cat.png" alt="Happy Cat">
+            <div id="successMessage">Yay! See you then! 😻</div>
+        </div>
+    </div>
+
+    <script>
+        const noBtn = document.getElementById('noBtn');
+        const yesBtn = document.getElementById('yesBtn');
+        const heading = document.getElementById('mainHeading');
+        const emojiHeader = document.getElementById('emojiHeader');
+        const buttonsContainer = document.querySelector('.buttons');
+        const teaseMessage = document.getElementById('teaseMessage');
+        const successContainer = document.getElementById('successContainer');
+        const containerBox = document.querySelector('.container');
+        const bgHearts = document.querySelectorAll('.bg-heart svg');
+
+        const phrases = [
+            "Nice try! 😉",
+            "Too slow! 🐢",
+            "You can't escape! 😈",
+            "Just say YES! ❤️",
+            "Missed me! 💨",
+            "Are you sure? 🤨",
+            "Don't be shy! 🙈",
+            "Resistance is futile! 🤖",
+            "Wrong button! ❌",
+            "Catch me if you can! 🏃",
+            "Really? 🥺"
+        ];
+
+        function moveButton() {
+            const maxWidth = window.innerWidth - noBtn.offsetWidth - 30;
+            const maxHeight = window.innerHeight - noBtn.offsetHeight - 30;
+            const newX = Math.max(20, Math.random() * maxWidth);
+            const newY = Math.max(20, Math.random() * maxHeight);
+
+            noBtn.style.position = 'fixed'; 
+            noBtn.style.left = `${newX}px`;
+            noBtn.style.top = `${newY}px`;
+
+            const randomPhrase = phrases[Math.floor(Math.random() * phrases.length)];
+            teaseMessage.innerText = randomPhrase;
+        }
+
+        // --- NO BUTTON LOGIC ---
+        document.addEventListener('mousemove', (e) => {
+            const mouseX = e.clientX;
+            const mouseY = e.clientY;
+            const btnRect = noBtn.getBoundingClientRect();
+            const distance = Math.sqrt(Math.pow(mouseX - (btnRect.left + btnRect.width/2), 2) + Math.pow(mouseY - (btnRect.top + btnRect.height/2), 2));
+            if (distance < 100) moveButton();
+        });
+
+        noBtn.addEventListener('touchstart', (e) => { e.preventDefault(); moveButton(); }, { passive: false });
+        noBtn.addEventListener('click', (e) => { e.preventDefault(); moveButton(); });
+
+        // --- YES BUTTON LOGIC ---
+        yesBtn.addEventListener('click', () => {
+            // 1. Hide Question Elements
+            buttonsContainer.style.display = 'none';
+            heading.style.display = 'none';
+            emojiHeader.style.display = 'none';
+            teaseMessage.style.display = 'none'; 
+            
+            // 2. Show Success
+            successContainer.style.display = 'block';
+            
+            // 3. Change Background Theme
+            document.body.style.background = 'linear-gradient(to bottom right, #ff758c, #ff7eb3)';
+            bgHearts.forEach(heart => heart.style.fill = '#ff0000');
+            
+            // 4. TRIGGER INFINITE CONFETTI
+            triggerInfiniteConfetti();
+
+            // 5. TRIGGER HEARTBEAT
+            containerBox.classList.add('pounding');
+            
+            noBtn.remove();
+        });
+
+        // Function to launch INFINITE confetti
+        function triggerInfiniteConfetti() {
+            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+            const random = (min, max) => Math.random() * (max - min) + min;
+
+            // No clear interval here - it runs forever!
+            setInterval(function() {
+                const particleCount = 50; 
+                // Shoot from left
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: random(0.1, 0.3), y: Math.random() - 0.2 } }));
+                // Shoot from right
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: random(0.7, 0.9), y: Math.random() - 0.2 } }));
+            }, 250);
+        }
+    </script>
+</body>
+</html>
